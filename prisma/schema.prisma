@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SMTPServer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  host      String
+  port      Int
+  username  String
+  password  String
+  createdAt DateTime @default(now())
+  campaigns Campaign[]
+}
+
+model Campaign {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  smtpId    Int
+  smtp      SMTPServer @relation(fields: [smtpId], references: [id])
+  emails    EmailAccount[]
+}
+
+model EmailAccount {
+  id          Int      @id @default(autoincrement())
+  email       String
+  campaignId  Int
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  createdAt   DateTime @default(now())
+}
